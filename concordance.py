@@ -1,21 +1,23 @@
 import sys
 from itertools import cycle
+import ipdb
 import pyjson5 as json5  # for reading json w/ potential vscode comments
 import json  # for saving
 import re
+import seaborn as sns
 
 # paths
 FILE_PATH = sys.argv[1]
 SETTINGS_PATH = '/Users/vmasrani/dev/phd/dendron/dendron.code-workspace'
 ARGS_PATH = '/Users/vmasrani/dev/phd/dendron/scripts/.args'
+OUT_PATH = '/Users/vmasrani/dev/phd/dendron/vault/assets/concordance.csv'
 
-# tokens
-COLORS = cycle(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#bcbd22', '#17becf'])
+# globals
 PUNC = '[\p{P},\W,\_]{1,5}'  # seperators between words can be punctionation or whitespace x5
 START = '[\\s,\\\",\\\']?'
 HIGHLIGHT_KEY = 'highlight.regexes'
-
-def tostring(x): return str.join(" ", x)
+COLORS = cycle(sns.color_palette().as_hex())
+TOSTRING = lambda x: str.join(" ", x)
 
 # We pass in arguments via .args file because
 # of how command-runner and emeraldwalk.runonsave work
@@ -29,15 +31,14 @@ with open(SETTINGS_PATH) as json_file:
 # fail fast here w/ bad paths or args
 MIN_PHRASE_LENGTH = ARGS[0]
 MIN_STRING_LENGTH = ARGS[1]
-WORDS_ONLY = ARGS[2]
-RESET = ARGS[3]
+WORDS_ONLY        = ARGS[2]
+RESET             = ARGS[3]
 
 def is_valid(candidate, phrases):
     for p in phrases:
         if (p != candidate) and (candidate in p):
             return False
     return True
-
 
 def parse_lines(lines):
     # deep nested generator so we iterate through everything only once
@@ -47,11 +48,9 @@ def parse_lines(lines):
             for gram in everygrams(tokens):
                 yield gram
 
-
 def make_key(phrase):
     phrase = phrase.replace(" ", PUNC)
     return f"({START}{phrase}{START})"
-
 
 def make_val(phrase, color):
     return {
@@ -59,8 +58,8 @@ def make_val(phrase, color):
         'decorations': [{'color': color}],
     }
 
-def make_regexs(phrases):
-    return {make_key(p): make_val(p, next(COLORS)) for p in phrases}
+def make_regexs(df):
+    return {make_key(k): make_val(k, next(COLORS)) for k, v in df.iterrows()}
 
 def markdown_to_text(markdown_path):
     """ Converts a markdown file to plaintext """
@@ -82,6 +81,7 @@ def markdown_to_text(markdown_path):
 
 def process_file(md_path):
     lines = markdown_to_text(md_path)
+    import ipdb; ipdb.set_trace()
     counts = defaultdict(int)
     for phrase in parse_lines(lines):
         counts[phrase] += 1
@@ -99,14 +99,18 @@ def process_file(md_path):
           .sort_values(['string_length', 'freq'], ascending=False)
           )
 
+    df['index'] = df['index'].apply(TOSTRING)
+    df = df.set_index('index')
+
     repeated_phrases = []
 
     for _, row in df.iterrows():
-        candidate = tostring(row['index'])
+        candidate = row.name
         if is_valid(candidate, repeated_phrases):
             repeated_phrases.append(candidate)
 
-    return repeated_phrases
+    df = df[df.index.isin(repeated_phrases)]
+    return df
 
 
 def process_words_only(md_path):
@@ -126,19 +130,22 @@ if __name__ == "__main__":
     elif WORDS_ONLY:
         phrases = process_words_only(FILE_PATH)
     else:
+        # imports here for fast loading when doing WORDS_ONLY
         from collections import defaultdict
         from nltk.tokenize import sent_tokenize, word_tokenize
         from nltk.util import everygrams
         import markdown
         from bs4 import BeautifulSoup
         import pandas as pd
+        import numpy as np
 
-        phrases = process_file(FILE_PATH)
+        df = process_file(FILE_PATH)
 
     if not RESET:
-        phrases = sorted(phrases)
-        print(phrases)
-        SETTINGS['settings'][HIGHLIGHT_KEY] = make_regexs(phrases)
+        SETTINGS['settings'][HIGHLIGHT_KEY] = make_regexs(df)
+        df.to_csv(OUT_PATH)
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+            print(df)
 
     with open(SETTINGS_PATH, 'w') as fp:
         json.dump(SETTINGS, fp, indent=4)
