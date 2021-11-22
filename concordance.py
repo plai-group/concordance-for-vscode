@@ -81,7 +81,6 @@ def markdown_to_text(markdown_path):
 
 def process_file(md_path):
     lines = markdown_to_text(md_path)
-    import ipdb; ipdb.set_trace()
     counts = defaultdict(int)
     for phrase in parse_lines(lines):
         counts[phrase] += 1
