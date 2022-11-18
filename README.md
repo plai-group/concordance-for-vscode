@@ -5,10 +5,10 @@ This is a little writing tool I made while procrastinating starting my thesis, b
 
 I've cobbled it together using python and four extensions:
 
-1. [Dendron](https://www.dendron.so/) Markdown based note-taking tool
-2. [regex highlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight) 
-3. [command runner](https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner)
-4. [run on save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave) 
+1. [Dendron](https://www.dendron.so/)
+2. [Regex highlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight)
+3. [Command runner](https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner)
+4. [Run on save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave)
 
 In a perfect world I would have written this in javascript and it would be a simple vscode extension (accepting pull requests!). I don't know how to do that however, and so instead I've used python to write custom regex, which are then fed to [regex highlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight). [Run on save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave) is used to update the highlights upon save, and [command runner](https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner) saves an `.args` token which changes the settings. [Dendron](https://www.dendron.so/) provides the environment where the markdown notes live.
 
@@ -19,11 +19,11 @@ In a perfect world I would have written this in javascript and it would be a sim
 pip install pyjson5 seaborn nltk markdown beautifulsoup4 pandas numpy
 ```
 - install vscode extensions 
-  1. [regex highlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight) 
-  2. [command runner](https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner)
-  3. [run on save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave) 
-  4. [dendron](https://www.dendron.so/)
-- git clone the repository and move concordance.py to `$dendron_directory/scripts/concordance.py`. 
+  1. [Dendron](https://www.dendron.so/)
+  2. [Regex highlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight) 
+  3. [Command runner](https://marketplace.visualstudio.com/items?itemName=edonet.vscode-command-runner)
+  4. [Run on save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave) 
+- git clone this repository and move concordance.py to `$dendron_directory/scripts/concordance.py`. 
   - the `script` subdirectory should be parallel to your `dendron.code-workspace` file.
 - change line 11 - 13 of concordance.py to the appropriate paths: 
 

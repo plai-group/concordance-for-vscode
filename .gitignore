@@ -2,6 +2,8 @@
 .env
 .ipynb_checkpoints
 debug.ipynb
+concordance.csv
+*.ipynb
 debug.py
 .vscode
 # Byte-compiled / optimized / DLL files
@@ -10,6 +12,7 @@ __pycache__/
 
 # C extensions
 *.so
+
 
 # Distribution / packaging
 .Python
