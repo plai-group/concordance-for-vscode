@@ -16,7 +16,7 @@ In a perfect world I would have written this in javascript and it would be a sim
 
 - install python packages 
 ```
-pip install pyjson5 seaborn nltk markdown beautifulsoup4 pandas numpy
+pip install pyjson5 seaborn nltk markdown beautifulsoup4 pandas
 ```
 - install vscode extensions 
   1. [Dendron](https://www.dendron.so/)
