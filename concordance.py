@@ -122,22 +122,39 @@ def process_words_only(md_path):
     lines = markdown_to_text(md_path)
     text = str.join("", lines)
     phrases = [r for r in re.findall(r'\b(\w+)\b(?=.*\b\1\b)', text, re.I) if len(r) > MIN_STRING_LENGTH]
-    return list(set(phrases))
+    df = (pd
+          .DataFrame.from_dict({k:v+1 for k,v in Counter(phrases).items()},
+                               orient='index',
+                               columns=['freq'])
+          .reset_index()
+          .assign(
+              phrase_length=lambda x: 1,
+              string_length=lambda x: x['index'].apply(lambda y: len(str.join('', y))),
+          )
+          .sort_values(['string_length', 'freq'], ascending=False)
+          .set_index('index')
+          )
+
+    return df
 
 if __name__ == "__main__":
     if RESET:
         SETTINGS['settings'][HIGHLIGHT_KEY] = {}
     elif WORDS_ONLY:
-        phrases = process_words_only(FILE_PATH)
+        # imports here for fast loading when doing RESET
+        import markdown
+        from bs4 import BeautifulSoup
+        from collections import Counter
+        import pandas as pd
+        df = process_words_only(FILE_PATH)
     else:
-        # imports here for fast loading when doing WORDS_ONLY
+        # imports here for fast loading when doing RESET
         from collections import defaultdict
         from nltk.tokenize import sent_tokenize, word_tokenize
         from nltk.util import everygrams
         import markdown
         from bs4 import BeautifulSoup
         import pandas as pd
-        import numpy as np
 
         df = process_file(FILE_PATH)
 
