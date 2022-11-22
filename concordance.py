@@ -120,7 +120,7 @@ def process_words_only(md_path):
     (faster and avoids import overhead)
     """
     lines = markdown_to_text(md_path)
-    text = str.join("", lines)
+    text = str.join(" ", lines)
     phrases = [r for r in re.findall(r'\b(\w+)\b(?=.*\b\1\b)', text, re.I) if len(r) > MIN_STRING_LENGTH]
     df = (pd
           .DataFrame.from_dict({k:v+1 for k,v in Counter(phrases).items()},
