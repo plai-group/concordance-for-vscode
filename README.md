@@ -18,6 +18,13 @@ In a perfect world I would have written this in javascript and it would be a sim
 ```
 pip install pyjson5 seaborn nltk markdown beautifulsoup4 pandas
 ```
+- from the python REPL run 
+
+```python
+import nltk
+nltk.download('punkt')
+```
+
 - install vscode extensions 
   1. [Dendron](https://www.dendron.so/)
   2. [Regex highlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight) 
