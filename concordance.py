@@ -68,10 +68,10 @@ def markdown_to_text(markdown_path):
         text = f.read().encode('utf-8').decode('ascii', 'ignore')
     # md -> html -> text since BeautifulSoup can extract text cleanly
     html = markdown.markdown(text)
-
     # remove code snippets
     html = re.sub(r'<pre>(.*?)</pre>', ' ', html)
     html = re.sub(r'<code>(.*?)</code >', ' ', html)
+    html = re.sub(r'<\!--(.*?)-->', ' ', html)
     html = re.sub(r'(\$+)(?:(?!\1)[\s\S])*\1', ' ', html) # mathjax
     html = re.sub(r' +', ' ', html)
 
